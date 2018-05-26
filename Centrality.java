@@ -112,8 +112,9 @@ public class Centrality {
 		ArrayList<Integer>[] betweenness = new ArrayList[componentSize];
 
 		for (int i = 0; i < componentSize; i++) {
-			HashMap<Integer, Double> dependencyTotal = new HashMap<>();
+			HashMap<Integer, Double> dependency = new HashMap<>();
 			ArrayList<Integer> component = graph.getComponents().get(i);
+
 			for (Integer source : component) {
 				/*
 				 * Runs a modified BFS algorithm on the graph to find the shortest
@@ -158,10 +159,50 @@ public class Centrality {
 				 * Runs the dependency accumulation algorithm to compute the betweenness
 				 * centrality for each node
 				 */
-				HashMap<Integer, Double> dependency = new HashMap<>();
+				HashMap<Integer, Double> accumulation = new HashMap<>();
+				for (Integer node : component) {
+					accumulation.put(node, 0.0);
+				}
+				while (!stack.isEmpty()) {
+					int current = stack.pop();
+					if (precedingNode.get(current) == null) {
+						continue;
+					}
+					for (Integer node : precedingNode.get(current)) {
+						double result = ((double) paths.get(node) / paths.get(current))
+								* (1 + accumulation.get(current));
+						accumulation.put(node, accumulation.get(node) + result);
+					}
+					if (current != source) {
+						if (!dependency.containsKey(current)) {
+							dependency.put(current, accumulation.get(current));
+						} else {
+							dependency.put(current,
+									dependency.get(current) + accumulation.get(current));
+						}
+					}
+				}
+			}
+			/*
+			 * Identify the node(s) with the smallest betweenness centrality value and
+			 * appropiately update the betweenness ArrayList array
+			 */
+			double minDependency = -1;
+			for (Integer node : dependency.keySet()) {
+				if (dependency.get(node) > minDependency) {
+					minDependency = dependency.get(node);
+					ArrayList<Integer> results = new ArrayList<>();
+					results.add(node);
+					betweenness[i] = results;
+				} else if (dependency.get(node) == minDependency) {
+					ArrayList<Integer> results = betweenness[i];
+					results.add(node);
+					betweenness[i] = results;
+				}
 			}
 		}
 		return betweenness;
+
 	}
 
 	/**
