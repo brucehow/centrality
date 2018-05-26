@@ -35,8 +35,8 @@ public class Main {
 		// Closeness Test
 		//System.out.println(Arrays.toString(c.closenessCentrality(g)));
 		
-		// Betweenness Test
-		
+		//Betweenness Test
+		System.out.println(Arrays.toString(c.betweennessCentrality(g)));
 	}
 
 

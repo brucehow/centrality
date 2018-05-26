@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 /**
  * <description>
@@ -40,9 +41,9 @@ public class Centrality {
 	}
 
 	/**
-	 * Runs a BFS on a given graph to fetch the nodes with the highest closeness
-	 * centrality for each component(s). This is the node with the smallest average
-	 * shortest paths to all other nodes in the graph.
+	 * Performs a BFS algorithm on a given graph to fetch the nodes with the highest
+	 * closeness centrality for each component(s). This is the node with the smallest
+	 * average shortest paths to all other nodes in the graph.
 	 * @param graph The graph to be checked
 	 * @return An array of nodes with the highest closeness centrality for each
 	 *         component.
@@ -110,6 +111,56 @@ public class Centrality {
 		int componentSize = graph.getComponents().size();
 		ArrayList<Integer>[] betweenness = new ArrayList[componentSize];
 
+		for (int i = 0; i < componentSize; i++) {
+			HashMap<Integer, Double> dependencyTotal = new HashMap<>();
+			ArrayList<Integer> component = graph.getComponents().get(i);
+			for (Integer source : component) {
+				/*
+				 * Runs a modified BFS algorithm on the graph to find the shortest
+				 * distances to all other nodes, preceding nodes and number of SP from
+				 * the source node
+				 */
+				Stack<Integer> stack = new Stack<>();
+				Queue<Integer> queue = new LinkedList<>();
+				HashMap<Integer, ArrayList<Integer>> precedingNode = new HashMap<>();
+				HashMap<Integer, Integer> distance = new HashMap<>();
+				HashMap<Integer, Integer> paths = new HashMap<>();
+
+				queue.add(source);
+				paths.put(source, 1);
+				distance.put(source, 0);
+
+				while (!queue.isEmpty()) {
+					int current = queue.poll();
+
+					// Used for the dependency accumulation algorithm later
+					stack.push(current);
+
+					for (Integer node : graph.getConnectedNodes(current)) {
+						// Node is founded for the first time
+						if (!distance.containsKey(node)) {
+							queue.add(node);
+							distance.put(node, distance.get(current) + 1);
+							paths.put(node, paths.get(current));
+							ArrayList<Integer> parent = new ArrayList<>();
+							parent.add(current);
+							precedingNode.put(node, parent);
+						} else if (distance.get(node) == distance.get(current) + 1) {
+							paths.put(node, paths.get(node) + paths.get(current));
+							ArrayList<Integer> precede = precedingNode.get(node);
+							precede.add(current);
+							precedingNode.put(node, precede);
+						}
+					}
+				}
+
+				/*
+				 * Runs the dependency accumulation algorithm to compute the betweenness
+				 * centrality for each node
+				 */
+				HashMap<Integer, Double> dependency = new HashMap<>();
+			}
+		}
 		return betweenness;
 	}
 
