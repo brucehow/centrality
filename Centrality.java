@@ -17,11 +17,11 @@ public class Centrality {
 	 * @param graph The graph to be checked
 	 * @return An array of nodes with the highest degree centrality for each component.
 	 */
-	public static ArrayList<Integer>[] degreeCentrality(Graph graph) {
+	public ArrayList<Integer>[] degreeCentrality(Graph graph) {
 		int componentSize = graph.getComponents().size();
 		ArrayList<Integer> degree[] = new ArrayList[componentSize];
 		for (int i = 0; i < componentSize; i++) {
-			int highest = 0;
+			int highest = -1;
 			for (int node : graph.getComponents().get(i)) {
 				int incidentEdges = graph.getConnectedNodes(node).size();
 				if (incidentEdges > highest) {
@@ -29,7 +29,7 @@ public class Centrality {
 					degreeNodes.add(node);
 					degree[i] = degreeNodes;
 					highest = incidentEdges;
-				} else if (incidentEdges == highest && !degree[i].contains(node)) {
+				} else if (incidentEdges == highest && degree[i].size() < 5) {
 					ArrayList<Integer> results = degree[i];
 					results.add(node);
 					degree[i] = results;
@@ -59,11 +59,11 @@ public class Centrality {
 				 * Runs a BFS algorithm on the graph to find the shortest distances to
 				 * all other nodes from the current source node
 				 */
-				// Map each distance to using a HashMap
 				HashMap<Integer, Integer> distance = new HashMap<>();
 				Queue<Integer> queue = new LinkedList<>();
-				distance.put(source, 0); // Set source distance to itself as 0
+				distance.put(source, 0);
 				int current = source;
+
 				while (distance.size() != component.size()) {
 					for (Integer node : graph.getConnectedNodes(current)) {
 						if (!distance.containsKey(node)) {
@@ -89,7 +89,7 @@ public class Centrality {
 					ArrayList<Integer> results = new ArrayList<>();
 					results.add(source);
 					closeness[i] = results;
-				} else if (totalDistance == shortest) {
+				} else if (totalDistance == shortest && closeness[i].size() < 5) {
 					ArrayList<Integer> results = closeness[i];
 					results.add(source);
 					closeness[i] = results;
@@ -112,14 +112,16 @@ public class Centrality {
 		ArrayList<Integer>[] betweenness = new ArrayList[componentSize];
 
 		for (int i = 0; i < componentSize; i++) {
-			HashMap<Integer, Double> dependency = new HashMap<>();
 			ArrayList<Integer> component = graph.getComponents().get(i);
+
+			// Stores the Betweenness Centrality value for each node
+			HashMap<Integer, Double> centrality = new HashMap<>();
 
 			for (Integer source : component) {
 				/*
-				 * Runs a modified BFS algorithm on the graph to find the shortest
-				 * distances to all other nodes, preceding nodes and number of SP from
-				 * the source node
+				 * Runs a BFS algorithm on the graph to find the shortest distances to
+				 * all other nodes, preceding nodes that pass within all the SP, and
+				 * number of SP from the source node
 				 */
 				Stack<Integer> stack = new Stack<>();
 				Queue<Integer> queue = new LinkedList<>();
@@ -146,6 +148,7 @@ public class Centrality {
 							ArrayList<Integer> parent = new ArrayList<>();
 							parent.add(current);
 							precedingNode.put(node, parent);
+							// Found another SP for existing node
 						} else if (distance.get(node) == distance.get(current) + 1) {
 							paths.put(node, paths.get(node) + paths.get(current));
 							ArrayList<Integer> precede = precedingNode.get(node);
@@ -154,48 +157,45 @@ public class Centrality {
 						}
 					}
 				}
-
 				/*
-				 * Runs the dependency accumulation algorithm to compute the betweenness
-				 * centrality for each node
+				 * Runs Brandes' dependency accumulation algorithm to compute the
+				 * betweenness centrality for each node.
 				 */
-				HashMap<Integer, Double> accumulation = new HashMap<>();
+				HashMap<Integer, Double> dependency = new HashMap<>();
 				for (Integer node : component) {
-					accumulation.put(node, 0.0);
+					dependency.put(node, 0.0);
 				}
 				while (!stack.isEmpty()) {
 					int current = stack.pop();
 					if (current != source) {
 						for (Integer node : precedingNode.get(current)) {
-							double result = ((double) paths.get(node)
-									/ paths.get(current))
-									* (1 + accumulation.get(current));
-							accumulation.put(node, accumulation.get(node) + result);
+							double result = ((double) paths.get(node) / paths.get(current))
+									* (1 + dependency.get(current));
+							dependency.put(node, dependency.get(node) + result);
 						}
-						if (!dependency.containsKey(current)) {
-							dependency.put(current, accumulation.get(current));
+						if (!centrality.containsKey(current)) {
+							centrality.put(current, dependency.get(current));
 						} else {
-							dependency.put(current,
-									dependency.get(current) + accumulation.get(current));
+							centrality.put(current, centrality.get(current) + dependency.get(current));
 						}
 					}
 				}
-				/*
-				 * Identify the node(s) with the smallest betweenness centrality value
-				 * and appropiately update the betweenness ArrayList array
-				 */
-				double minDependency = -1;
-				for (Integer node : dependency.keySet()) {
-					if (dependency.get(node) > minDependency) {
-						minDependency = dependency.get(node);
-						ArrayList<Integer> results = new ArrayList<>();
-						results.add(node);
-						betweenness[i] = results;
-					} else if (dependency.get(node) == minDependency) {
-						ArrayList<Integer> results = betweenness[i];
-						results.add(node);
-						betweenness[i] = results;
-					}
+			}
+			/*
+			 * Identify the node(s) with the highest centrality value and update the
+			 * betweenness ArrayList array appropiately.
+			 */
+			double minDependency = -1;
+			for (Integer node : centrality.keySet()) {
+				if (centrality.get(node) > minDependency) {
+					minDependency = centrality.get(node);
+					ArrayList<Integer> results = new ArrayList<>();
+					results.add(node);
+					betweenness[i] = results;
+				} else if (centrality.get(node) == minDependency && betweenness[i].size() < 5) {
+					ArrayList<Integer> results = betweenness[i];
+					results.add(node);
+					betweenness[i] = results;
 				}
 			}
 		}
