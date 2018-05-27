@@ -1,15 +1,16 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+	/////////////////////////////////////////////////////////////////////////////
+	// File Predefined Directories - Change this to your own project directory //
+	/////////////////////////////////////////////////////////////////////////////
+	static String dir = "/Users/bruce/Documents/workspace/Project2018/src/";
 
 	public static void main(String[] args) throws IOException {
 		Scanner sc = new Scanner(System.in);
-		/////////////////////////////////////////////////////////////////////////////
-		// File Predefined Directories - Change this to your own project directory //
-		/////////////////////////////////////////////////////////////////////////////
-		String dir = "/Users/bruce/Documents/workspace/Project2018/src/";
 
 		System.out.print("Enter edge file name: ");
 		String filepath = dir + sc.next() + ".edges";
@@ -39,8 +40,9 @@ public class Main {
 		 * g.getComponents()) { System.out.println(comp); int count = 0; for (Integer x :
 		 * comp) { count++; } System.out.println("Count : " + count); }
 		 */
+		System.out.println("\n");
 		for (int i = 0; i < g.getComponents().size(); i++) {
-			System.out.println("\nComponent " + (i+1) + "\n------------------------");
+			System.out.println("\nComponent " + (i + 1) + "\n-----------------");
 			/////////////////////////////////////////////////////////////////////////////
 			/////////////////////////// Degree Centrality Test //////////////////////////
 			/////////////////////////////////////////////////////////////////////////////
@@ -64,9 +66,11 @@ public class Main {
 			/////////////////////////////////////////////////////////////////////////////
 			count = 1;
 			System.out.println("Betweeness Centrality:");
-			for (Integer node : c.betweennessCentrality(g)[i]) {
+			ArrayList<Integer>[] ans = c.betweennessCentrality(g);
+			for (Integer node : ans[i]) {
 				System.out.println(node);
 			}
 		}
+		sc.close();
 	}
 }
