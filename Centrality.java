@@ -94,8 +94,7 @@ public class Centrality {
 					ArrayList<Integer> results = new ArrayList<>();
 					results.add(source);
 					closeness[i] = results;
-				} else if (totalDistance == shortest
-						&& closeness[i].size() < 5) {
+				} else if (totalDistance == shortest && closeness[i].size() < 5) {
 					ArrayList<Integer> results = closeness[i];
 					results.add(source);
 					closeness[i] = results;
@@ -155,12 +154,9 @@ public class Centrality {
 							parent.add(current);
 							precedingNode.put(node, parent);
 							// Found another SP for existing node
-						} else if (distance.get(node) == distance.get(current)
-								+ 1) {
-							paths.put(node,
-									paths.get(node) + paths.get(current));
-							ArrayList<Integer> precede = precedingNode
-									.get(node);
+						} else if (distance.get(node) == distance.get(current) + 1) {
+							paths.put(node, (paths.get(node) + paths.get(current)));
+							ArrayList<Integer> precede = precedingNode.get(node);
 							precede.add(current);
 							precedingNode.put(node, precede);
 						}
@@ -179,15 +175,14 @@ public class Centrality {
 					if (current != source) {
 						for (Integer node : precedingNode.get(current)) {
 							double result = ((double) paths.get(node)
-									/ paths.get(current))
-									* (1 + dependency.get(current));
+									/ paths.get(current)) * (1 + dependency.get(current));
 							dependency.put(node, dependency.get(node) + result);
 						}
 						if (!centrality.containsKey(current)) {
 							centrality.put(current, dependency.get(current));
 						} else {
-							centrality.put(current, centrality.get(current)
-									+ dependency.get(current));
+							centrality.put(current,
+									centrality.get(current) + dependency.get(current));
 						}
 					}
 				}
@@ -210,7 +205,6 @@ public class Centrality {
 					betweenness[i] = results;
 				}
 			}
-			System.out.println(centrality.toString());
 		}
 		return betweenness;
 	}

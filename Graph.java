@@ -20,7 +20,7 @@ public class Graph {
 	private ArrayList<ArrayList<Integer>> components;
 
 	/**
-	 * Constructor for the graph class to generate the graph from an edge list.
+	 * Constructor for the graph class to generate the graph from an edge list
 	 * @param path The file path to the edge list
 	 * @throws IOException if the file path does not exist
 	 */
@@ -28,13 +28,14 @@ public class Graph {
 		adjList = new HashMap<>();
 		components = new ArrayList<ArrayList<Integer>>();
 		generateGraph(path);
-		generateComponents();
+		identifyComponents();
 	}
 
 	/**
 	 * Check for all the connected nodes to a specified node
 	 * @param u The node to check
-	 * @return An ArrayList containing the list of connected nodes to the specified node
+	 * @return An ArrayList containing the list of connected nodes to the
+	 *         specified node
 	 */
 	public ArrayList<Integer> getConnectedNodes(int u) {
 		return adjList.get(u);
@@ -63,6 +64,15 @@ public class Graph {
 	}
 
 	/**
+	 * Fetch every node in each componenet(s) of the graph
+	 * @return An ArrayList containing an ArrayList of nodes in a particular
+	 *         component
+	 */
+	public ArrayList<ArrayList<Integer>> getComponents() {
+		return components;
+	}
+
+	/**
 	 * Generate a string representation of the adjacency list.
 	 * @return A string represenation of the adjacency list.
 	 */
@@ -73,24 +83,18 @@ public class Graph {
 		}
 		return s;
 	}
-	
-	/**
-	 * 
-	 */
-	public ArrayList<ArrayList<Integer>> getComponents() {
-		return components;
-	}
 
 	/**
-	 * Runs a BFS on the graph to fetch each componenet of the graph
-	 * @return An ArrayList containing an ArrayList of nodes in a particular component
+	 * Runs a BFS on the graph to generate each componenet(s) of the graph and
+	 * store each component in the components ArrayList.
 	 */
-	private void generateComponents() {
+	private void identifyComponents() {
 		Queue<Integer> queue = new LinkedList<>();
 		ArrayList<Integer> visited = new ArrayList<>();
 		ArrayList<Integer> componentSet = new ArrayList<>();
 		Iterator<Integer> it = getNodes().iterator();
 		int current = it.next();
+
 		visited.add(current);
 		componentSet.add(current);
 
@@ -103,8 +107,11 @@ public class Graph {
 				}
 			}
 			if (queue.isEmpty()) {
+				// Component is complete but nodes still exists
 				components.add(componentSet);
 				componentSet = new ArrayList<>();
+
+				// Identify a new node outside of the existing components
 				int nextCurrent = current;
 				while (nextCurrent == current) {
 					int next = it.next();
@@ -136,7 +143,7 @@ public class Graph {
 			int u = Integer.parseInt(node[0]);
 			int v = Integer.parseInt(node[1]);
 			addConnection(u, v);
-			addConnection(v, u); // added twice as edges are mutual
+			addConnection(v, u); // Added twice as edges are mutual
 		}
 		reader.close();
 
@@ -164,8 +171,8 @@ public class Graph {
 	}
 
 	/**
-	 * Helper method which performs a binary search for an item in a given ArrayList.
-	 * Used to quickly check if a node exists in an ArrayList.
+	 * Helper method which performs a binary search for an item in a given
+	 * ArrayList. Used to quickly check if a node exists in an ArrayList.
 	 * @param list The ArrayList of connected nodes
 	 * @param item The node to search for
 	 * @return True if the node is in the ArrayList, false otherwise

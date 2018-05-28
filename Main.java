@@ -18,8 +18,7 @@ public class Main {
 		try {
 			g = new Graph(filepath);
 		} catch (FileNotFoundException e) {
-			System.err
-					.println("Invalid file. Please check file name and predefined dir.");
+			System.err.println("Invalid file. Please check file name and predefined dir.");
 			return;
 		}
 		Centrality c = new Centrality();
@@ -40,7 +39,7 @@ public class Main {
 		 * g.getComponents()) { System.out.println(comp); int count = 0; for (Integer x :
 		 * comp) { count++; } System.out.println("Count : " + count); }
 		 */
-		System.out.println("\n");
+		/*
 		for (int i = 0; i < g.getComponents().size(); i++) {
 			System.out.println("\nComponent " + (i + 1) + "\n-----------------");
 			/////////////////////////////////////////////////////////////////////////////
@@ -70,7 +69,8 @@ public class Main {
 			for (Integer node : ans[i]) {
 				System.out.println(node);
 			}
-		}
+		}*/
+		c.betweennessCentrality(g);
 		sc.close();
 	}
 }
