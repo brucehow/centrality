@@ -17,6 +17,7 @@ import java.util.Set;
 public class Graph {
 
 	private HashMap<Integer, ArrayList<Integer>> adjList;
+	private ArrayList<ArrayList<Integer>> components;
 
 	/**
 	 * Constructor for the graph class to generate the graph from an edge list.
@@ -25,7 +26,9 @@ public class Graph {
 	 */
 	public Graph(String path) throws IOException {
 		adjList = new HashMap<>();
+		components = new ArrayList<ArrayList<Integer>>();
 		generateGraph(path);
+		generateComponents();
 	}
 
 	/**
@@ -60,11 +63,29 @@ public class Graph {
 	}
 
 	/**
+	 * Generate a string representation of the adjacency list.
+	 * @return A string represenation of the adjacency list.
+	 */
+	public String toString() {
+		String s = "";
+		for (int key : adjList.keySet()) {
+			s += key + ", " + adjList.get(key).toString() + "\n";
+		}
+		return s;
+	}
+	
+	/**
+	 * 
+	 */
+	public ArrayList<ArrayList<Integer>> getComponents() {
+		return components;
+	}
+
+	/**
 	 * Runs a BFS on the graph to fetch each componenet of the graph
 	 * @return An ArrayList containing an ArrayList of nodes in a particular component
 	 */
-	public ArrayList<ArrayList<Integer>> getComponents() {
-		ArrayList<ArrayList<Integer>> components = new ArrayList<ArrayList<Integer>>();
+	private void generateComponents() {
 		Queue<Integer> queue = new LinkedList<>();
 		ArrayList<Integer> visited = new ArrayList<>();
 		ArrayList<Integer> componentSet = new ArrayList<>();
@@ -99,19 +120,6 @@ public class Graph {
 				current = queue.poll();
 			}
 		}
-		return components;
-	}
-
-	/**
-	 * Generate a string representation of the adjacency list.
-	 * @return A string represenation of the adjacency list.
-	 */
-	public String toString() {
-		String s = "";
-		for (int key : adjList.keySet()) {
-			s += key + ", " + adjList.get(key).toString() + "\n";
-		}
-		return s;
 	}
 
 	/**
