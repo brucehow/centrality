@@ -121,7 +121,7 @@ public class Centrality {
 		for (int i = 0; i < componentSize; i++) {
 			ArrayList<Integer> component = graph.getComponents().get(i);
 
-			// Stores the Betweenness Centrality value for each node
+			// stores the Betweenness Centrality value for each node
 			HashMap<Integer, Double> centrality = new HashMap<>();
 
 			for (Integer source : component) {
@@ -143,11 +143,12 @@ public class Centrality {
 				while (!queue.isEmpty()) {
 					int current = queue.poll();
 
-					// Used for the dependency accumulation algorithm later
+					// used for the dependency accumulation algorithm later
 					stack.push(current);
 
 					for (Integer node : graph.getConnectedNodes(current)) {
-						// Node is founded for the first time
+
+						// node is founded for the first time
 						if (!distance.containsKey(node)) {
 							queue.add(node);
 							distance.put(node, distance.get(current) + 1);
@@ -155,7 +156,8 @@ public class Centrality {
 							ArrayList<Integer> parent = new ArrayList<>();
 							parent.add(current);
 							precedingNode.put(node, parent);
-							// Found another SP for existing node
+
+							// found another SP for existing node
 						} else if (distance.get(node) == distance.get(current) + 1) {
 							paths.put(node, (paths.get(node) + paths.get(current)));
 							ArrayList<Integer> precede = precedingNode.get(node);
@@ -183,8 +185,8 @@ public class Centrality {
 						if (!centrality.containsKey(current)) {
 							centrality.put(current, dependency.get(current) / 2);
 						} else {
-							centrality.put(current,
-									centrality.get(current) + dependency.get(current) / 2);
+							centrality.put(current, centrality.get(current)
+									+ dependency.get(current) / 2);
 						}
 					}
 				}
@@ -207,7 +209,6 @@ public class Centrality {
 					betweenness[i] = results;
 				}
 			}
-			System.out.println(centrality.toString());
 		}
 		return betweenness;
 	}
@@ -238,7 +239,7 @@ public class Centrality {
 				Queue<Integer> queue = new LinkedList<>();
 				level.put(source, 0);
 
-				// Stores the Katz centrality value of the source node
+				// stores the Katz centrality value of the source node
 				double centrality = 0;
 				int current = source;
 
