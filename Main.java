@@ -25,6 +25,11 @@ public class Main {
 		// appropiately assign the second argument to the katz variable
 		if (args.length == 2) {
 			alpha = Double.parseDouble(args[1]);
+			// checks for appropiate alpha value
+			if (alpha <= 0 || alpha >= 1) {
+				System.err.println("Invalid Arguments\nAlpha must be between 0 and 1");
+				return;
+			}
 		} else {
 			alpha = 0.5;
 		}
