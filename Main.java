@@ -1,6 +1,13 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * The main class which utilizes the Graph and Centrality class to compute the
+ * degree, closeness, betweenness and katz centrality for a given graph. This
+ * class requires an edge file argument and takes an optional katz alpha value
+ * argument.
+ * @author Bruce How (22242664) & Haolin Wu (21706137)
+ */
 public class Main {
 
 	private static String filepath;
@@ -15,12 +22,15 @@ public class Main {
 					"\nCustom Katz alpha value\n\tUsage: java Main <filepath> <alpha>");
 			return;
 		}
+		// appropiately assign the second argument to the katz variable
 		if (args.length == 2) {
 			alpha = Double.parseDouble(args[1]);
 		} else {
 			alpha = 0.5;
 		}
 		filepath = args[0];
+
+		// tries to create a Graph object with the given file path
 		try {
 			graph = new Graph(filepath);
 		} catch (FileNotFoundException e) {
@@ -29,7 +39,6 @@ public class Main {
 		}
 
 		centrality = new Centrality();
-
 		System.out.println(filepath);
 
 		for (int i = 0; i < graph.getComponents().size(); i++) {
