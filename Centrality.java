@@ -1,7 +1,9 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -24,24 +26,26 @@ public class Centrality {
 	 */
 	public ArrayList<Integer>[] degreeCentrality(Graph graph) {
 		int componentSize = graph.getComponents().size();
-		PriorityQueue<Integer> top = new PriorityQueue<>();
 		ArrayList<Integer> degree[] = new ArrayList[componentSize];
+
 		for (int i = 0; i < componentSize; i++) {
-			int highest = -1;
+			/* Used to store the centrality value for each node */
+			ArrayList<Node> centralityValue = new ArrayList<>();
+
 			for (int node : graph.getComponents().get(i)) {
-				int incidentEdges = graph.getConnectedNodes(node).size();
-				if (incidentEdges > highest) {
-					ArrayList<Integer> degreeNodes = new ArrayList<>();
-					degreeNodes.add(node);
-					degree[i] = degreeNodes;
-					highest = incidentEdges;
-				} else if (incidentEdges == highest && degree[i].size() < 5) {
-					ArrayList<Integer> results = degree[i];
-					results.add(node);
-					degree[i] = results;
-					highest = incidentEdges;
-				}
+				int incidentNodes = graph.getConnectedNodes(node).size();
+				centralityValue.add(new Node(node, incidentNodes));
 			}
+
+			// sorts the nodes according to its degree centrality
+			ArrayList<Integer> results = new ArrayList<>();
+			Collections.sort(centralityValue, Collections.reverseOrder());
+			Iterator<Node> it = centralityValue.iterator();
+
+			while (it.hasNext() && results.size() < 5) {
+				results.add((int) it.next().id);
+			}
+			degree[i] = results;
 		}
 		return degree;
 	}
@@ -58,7 +62,9 @@ public class Centrality {
 		int componentSize = graph.getComponents().size();
 		ArrayList<Integer> closeness[] = new ArrayList[componentSize];
 		for (int i = 0; i < componentSize; i++) {
-			int shortest = Integer.MAX_VALUE;
+			/* Used to store the centrality value for each node */
+			ArrayList<Node> centralityValue = new ArrayList<>();
+
 			ArrayList<Integer> component = graph.getComponents().get(i);
 			for (Integer source : component) {
 				/*
@@ -81,27 +87,27 @@ public class Centrality {
 						current = queue.poll();
 					}
 				}
-
 				/*
-				 * Caculate total distance for the SP of the source to each node
-				 * and update the variables respectively. This is the far(j) as
-				 * described in the project brief
+				 * Caculate total SP distance from source to each node and adds
+				 * it to the centralityValue ArrayList.
 				 */
 				int totalDistance = 0;
 				for (Integer nodeDistance : distance.values()) {
 					totalDistance += nodeDistance;
 				}
-				if (totalDistance < shortest) {
-					shortest = totalDistance;
-					ArrayList<Integer> results = new ArrayList<>();
-					results.add(source);
-					closeness[i] = results;
-				} else if (totalDistance == shortest && closeness[i].size() < 5) {
-					ArrayList<Integer> results = closeness[i];
-					results.add(source);
-					closeness[i] = results;
-				}
+				centralityValue.add(new Node(source, totalDistance));
 			}
+
+			// sorts the nodes according to its closeness centrality
+			ArrayList<Integer> results = new ArrayList<>();
+			// values represent far(j) thus reverse sort is not needed
+			Collections.sort(centralityValue);
+			Iterator<Node> it = centralityValue.iterator();
+
+			while (it.hasNext() && results.size() < 5) {
+				results.add((int) it.next().id);
+			}
+			closeness[i] = results;
 		}
 		return closeness;
 	}
@@ -121,7 +127,7 @@ public class Centrality {
 		for (int i = 0; i < componentSize; i++) {
 			ArrayList<Integer> component = graph.getComponents().get(i);
 
-			// stores the Betweenness Centrality value for each node
+			/* Stores the Betweenness Centrality value for each node */
 			HashMap<Integer, Double> centrality = new HashMap<>();
 
 			for (Integer source : component) {
@@ -183,6 +189,7 @@ public class Centrality {
 							dependency.put(node, dependency.get(node) + result);
 						}
 						if (!centrality.containsKey(current)) {
+							// divided by 2 due to the graph's undirected nature
 							centrality.put(current, dependency.get(current) / 2);
 						} else {
 							centrality.put(current, centrality.get(current)
@@ -191,24 +198,19 @@ public class Centrality {
 					}
 				}
 			}
-			/*
-			 * Identify the node(s) with the highest centrality value and update
-			 * the betweenness ArrayList array appropiately.
-			 */
-			double minDependency = -1;
+			/* Used to store the centrality value for each node */
+			ArrayList<Node> centralityValue = new ArrayList<>();
 			for (Integer node : centrality.keySet()) {
-				if (centrality.get(node) > minDependency) {
-					minDependency = centrality.get(node);
-					ArrayList<Integer> results = new ArrayList<>();
-					results.add(node);
-					betweenness[i] = results;
-				} else if (centrality.get(node) == minDependency
-						&& betweenness[i].size() < 5) {
-					ArrayList<Integer> results = betweenness[i];
-					results.add(node);
-					betweenness[i] = results;
-				}
+				centralityValue.add(new Node(node, centrality.get(node)));
 			}
+			// sorts the nodes according to its closeness centrality
+			ArrayList<Integer> results = new ArrayList<>();
+			Collections.sort(centralityValue, Collections.reverseOrder());
+			Iterator<Node> it = centralityValue.iterator();
+			while (it.hasNext() && results.size() < 5) {
+				results.add((int) it.next().id);
+			}
+			betweenness[i] = results;
 		}
 		return betweenness;
 	}
@@ -228,6 +230,9 @@ public class Centrality {
 		for (int i = 0; i < componentSize; i++) {
 			double highest = 0;
 			ArrayList<Integer> component = graph.getComponents().get(i);
+
+			/* Used to store the centrality value for each node */
+			ArrayList<Node> centralityValue = new ArrayList<>();
 
 			for (Integer source : component) {
 				/*
@@ -256,23 +261,45 @@ public class Centrality {
 						current = queue.poll();
 					}
 				}
-				/*
-				 * Identify whether the current source has the highest Katz
-				 * centrality value and update the katz ArrayList array
-				 * appropiately.
-				 */
-				if (centrality > highest) {
-					ArrayList<Integer> results = new ArrayList<>();
-					results.add(source);
-					highest = centrality;
-					katz[i] = results;
-				} else if (centrality == highest && katz[i].size() < 5) {
-					ArrayList<Integer> results = katz[i];
-					results.add(source);
-					katz[i] = results;
-				}
+				centralityValue.add(new Node(source, centrality));
 			}
+			// sorts the nodes according to its closeness centrality
+			ArrayList<Integer> results = new ArrayList<>();
+			Collections.sort(centralityValue, Collections.reverseOrder());
+			Iterator<Node> it = centralityValue.iterator();
+			while (it.hasNext() && results.size() < 5) {
+				results.add((int) it.next().id);
+			}
+			katz[i] = results;
 		}
 		return katz;
+	}
+
+	/**
+	 * Private subclass which stores each Node and their respective centrality
+	 * value. This class implements the Comparable interface to compare each
+	 * Node and its respective centrality value
+	 */
+	private class Node implements Comparable<Node> {
+		private int id;
+		private double value;
+
+		/**
+		 * Constructor for the subclass to create a node object
+		 * @param id The node ID
+		 * @param value The centrality value of the node
+		 */
+		public Node(int id, double value) {
+			this.id = id;
+			this.value = value;
+		}
+
+		/**
+		 * Compares this object with the specified object for ordering
+		 */
+		@Override
+		public int compareTo(Node node) {
+			return Double.compare(value, node.value);
+		}
 	}
 }
