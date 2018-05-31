@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,12 +23,11 @@ public class Centrality {
 	 * @return An array of nodes with the highest degree centrality for each
 	 *         component
 	 */
-	public ArrayList<Integer>[] degreeCentrality(Graph graph) {
+	public ArrayList<ArrayList<Integer>> degreeCentrality(Graph graph) {
 		int componentSize = graph.getComponents().size();
-		ArrayList<Integer> degree[] = new ArrayList[componentSize];
-
+		ArrayList<ArrayList<Integer>> degree = new ArrayList<>();
 		for (int i = 0; i < componentSize; i++) {
-			/* Used to store the centrality value for each node */
+			// stores the degree centrality value for each node
 			ArrayList<Node> centralityValue = new ArrayList<>();
 
 			for (int node : graph.getComponents().get(i)) {
@@ -45,7 +43,7 @@ public class Centrality {
 			while (it.hasNext() && results.size() < 5) {
 				results.add((int) it.next().id);
 			}
-			degree[i] = results;
+			degree.add(results);
 		}
 		return degree;
 	}
@@ -58,11 +56,11 @@ public class Centrality {
 	 * @return An array of nodes with the highest closeness centrality for each
 	 *         component
 	 */
-	public ArrayList<Integer>[] closenessCentrality(Graph graph) {
+	public ArrayList<ArrayList<Integer>> closenessCentrality(Graph graph) {
 		int componentSize = graph.getComponents().size();
-		ArrayList<Integer> closeness[] = new ArrayList[componentSize];
+		ArrayList<ArrayList<Integer>> closeness = new ArrayList<>();
 		for (int i = 0; i < componentSize; i++) {
-			/* Used to store the centrality value for each node */
+			// stores the closeness centrality value for each node
 			ArrayList<Node> centralityValue = new ArrayList<>();
 
 			ArrayList<Integer> component = graph.getComponents().get(i);
@@ -107,7 +105,7 @@ public class Centrality {
 			while (it.hasNext() && results.size() < 5) {
 				results.add((int) it.next().id);
 			}
-			closeness[i] = results;
+			closeness.add(results);
 		}
 		return closeness;
 	}
@@ -120,14 +118,14 @@ public class Centrality {
 	 * @return An array of nodes with the highest closeness centrality for each
 	 *         component.
 	 */
-	public ArrayList<Integer>[] betweennessCentrality(Graph graph) {
+	public ArrayList<ArrayList<Integer>> betweennessCentrality(Graph graph) {
 		int componentSize = graph.getComponents().size();
-		ArrayList<Integer>[] betweenness = new ArrayList[componentSize];
+		ArrayList<ArrayList<Integer>> betweenness = new ArrayList<>();
 
 		for (int i = 0; i < componentSize; i++) {
 			ArrayList<Integer> component = graph.getComponents().get(i);
 
-			/* Stores the Betweenness Centrality value for each node */
+			// stores the betweenness Centrality value for each node
 			HashMap<Integer, Double> centrality = new HashMap<>();
 
 			for (Integer source : component) {
@@ -198,7 +196,7 @@ public class Centrality {
 					}
 				}
 			}
-			/* Used to store the centrality value for each node */
+			// stores the centrality value for each node as a Node object
 			ArrayList<Node> centralityValue = new ArrayList<>();
 			for (Integer node : centrality.keySet()) {
 				centralityValue.add(new Node(node, centrality.get(node)));
@@ -210,7 +208,7 @@ public class Centrality {
 			while (it.hasNext() && results.size() < 5) {
 				results.add((int) it.next().id);
 			}
-			betweenness[i] = results;
+			betweenness.add(results);
 		}
 		return betweenness;
 	}
@@ -223,15 +221,14 @@ public class Centrality {
 	 * @return An array of nodes with the highest Katz centrality for each
 	 *         component
 	 */
-	public ArrayList<Integer>[] katzCentralitry(Graph graph, double alpha) {
+	public ArrayList<ArrayList<Integer>> katzCentrality(Graph graph, double alpha) {
 		int componentSize = graph.getComponents().size();
-		ArrayList<Integer>[] katz = new ArrayList[componentSize];
+		ArrayList<ArrayList<Integer>> katz = new ArrayList<>();
 
 		for (int i = 0; i < componentSize; i++) {
-			double highest = 0;
 			ArrayList<Integer> component = graph.getComponents().get(i);
 
-			/* Used to store the centrality value for each node */
+			// store the centrality value for each node 
 			ArrayList<Node> centralityValue = new ArrayList<>();
 
 			for (Integer source : component) {
@@ -270,7 +267,7 @@ public class Centrality {
 			while (it.hasNext() && results.size() < 5) {
 				results.add((int) it.next().id);
 			}
-			katz[i] = results;
+			katz.add(results);
 		}
 		return katz;
 	}
