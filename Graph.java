@@ -106,12 +106,15 @@ public class Graph {
 					componentSet.add(node);
 				}
 			}
-			if (queue.isEmpty()) {
-				// Component is complete but nodes still exists
+			if (visited.size() == getNodes().size()) {
+				// graph is complete
+				components.add(componentSet);
+			} else if (queue.isEmpty()) {
+				// component is complete
 				components.add(componentSet);
 				componentSet = new ArrayList<>();
 
-				// Identify a new node outside of the existing components
+				// identify next node to visit
 				int nextCurrent = current;
 				while (nextCurrent == current) {
 					int next = it.next();
@@ -121,9 +124,8 @@ public class Graph {
 						componentSet.add(current);
 					}
 				}
-			} else if (visited.size() == getNodes().size()) {
-				components.add(componentSet);
 			} else {
+				// component is not complete
 				current = queue.poll();
 			}
 		}
@@ -142,8 +144,9 @@ public class Graph {
 			String[] node = row.split(" ");
 			int u = Integer.parseInt(node[0]);
 			int v = Integer.parseInt(node[1]);
+			// edges are added twice as they are mutual
 			addConnection(u, v);
-			addConnection(v, u); // Added twice as edges are mutual
+			addConnection(v, u);
 		}
 		reader.close();
 
