@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
@@ -23,6 +24,7 @@ public class Centrality {
 	 */
 	public ArrayList<Integer>[] degreeCentrality(Graph graph) {
 		int componentSize = graph.getComponents().size();
+		PriorityQueue<Integer> top = new PriorityQueue<>();
 		ArrayList<Integer> degree[] = new ArrayList[componentSize];
 		for (int i = 0; i < componentSize; i++) {
 			int highest = -1;
@@ -179,10 +181,10 @@ public class Centrality {
 							dependency.put(node, dependency.get(node) + result);
 						}
 						if (!centrality.containsKey(current)) {
-							centrality.put(current, dependency.get(current));
+							centrality.put(current, dependency.get(current) / 2);
 						} else {
 							centrality.put(current,
-									centrality.get(current) + dependency.get(current));
+									centrality.get(current) + dependency.get(current) / 2);
 						}
 					}
 				}
@@ -205,6 +207,7 @@ public class Centrality {
 					betweenness[i] = results;
 				}
 			}
+			System.out.println(centrality.toString());
 		}
 		return betweenness;
 	}
