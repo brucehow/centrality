@@ -5,4 +5,8 @@ These files should be used as a guideline to understanding a lab. Copying the co
 
 <b>Contents<b>
   
+  - `Main.java`
   - `Graph.java`
+  - `Centrality.java`
+  - Tester edge files
+  - Project Report
