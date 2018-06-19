@@ -3,7 +3,7 @@
 
 These files should be used as a guideline to understanding a lab. Copying the code in any way risks Academic Misconduct at the University of Western Australia. Discretion is advised.
 
-<b>Contents<b>
+<b>Contents</b>
   
   - `Main.java`
   - `Graph.java`
