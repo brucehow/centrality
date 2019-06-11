@@ -5,8 +5,8 @@ These files should be used as a guideline to understanding the project. Copying 
 
 <b>Contents:</b>
   
-  - `Main.java`
-  - `Graph.java`
-  - `Centrality.java`
+  - Main.java
+  - Graph.java
+  - Centrality.java
   - Tester edge files
   - Project Report
